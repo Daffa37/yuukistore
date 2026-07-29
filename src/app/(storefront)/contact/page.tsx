@@ -13,7 +13,7 @@ import { useState } from "react";
 //  5. Copy Access Key-nya
 //  6. Ganti "YOUR_WEB3FORMS_ACCESS_KEY" di bawah dengan key kamu
 // ================================================================
-const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY"; // ← GANTI INI DENGAN KEY BARU ANDA!
+const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY"; // ← GANTI INI
 
 export default function ContactPage() {
   const [name, setName]       = useState("");
@@ -43,8 +43,9 @@ export default function ContactPage() {
           email: email.trim(),
           subject: subject.trim() || `[YuukiStore] Pesan dari ${name.trim()}`,
           message: message.trim(),
+          // Opsi tambahan Web3Forms:
           from_name: "YuukiStore Contact Form",
-          redirect: false,
+          redirect: false, // jangan redirect, kita handle sendiri
         }),
       });
 
@@ -58,10 +59,9 @@ export default function ContactPage() {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal mengirim pesan";
-      
-      // PERBAIKAN DI SINI: Cek apakah key masih kosong (default)
+      // Jika key belum diganti, kasih pesan khusus
       if (WEB3FORMS_KEY === "8780b098-12b5-4952-af58-60758137bcfb") {
-        setError("Access Key Web3Forms belum diisi. Buka web3forms.com menggunakan email youxiyuuki531@gmail.com untuk mendapatkan key.");
+        setError("Access Key Web3Forms belum diisi. Buka web3forms.com dan masukkan email youxiyuuki531@gmail.com untuk mendapatkan key.");
       } else {
         setError(msg);
       }
@@ -83,7 +83,7 @@ export default function ContactPage() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
-        {/* Info kontak - Email sudah diganti */}
+        {/* Info kontak */}
         <div className="grid grid-cols-1 gap-3">
           {[
             { icon: "💬", label: "WhatsApp",       value: "+62 851-7234-7189",       href: "https://wa.me/6285172347189" },
@@ -192,7 +192,7 @@ export default function ContactPage() {
                 {loading ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Mengirim...</>
                 ) : (
-                  "📨 Kirim ke Admin"
+                  "📨 Kirim ke youxiyuuki531@gmail.com"
                 )}
               </button>
             </form>
