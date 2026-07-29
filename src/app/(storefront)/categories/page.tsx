@@ -149,6 +149,8 @@ export default function CategoryPage() {
                   className="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-violet-200 hover:shadow-md transition-all"
                 >
                   <div className="aspect-square bg-gradient-to-br from-violet-50 to-indigo-50 flex items-center justify-center relative">
+                    
+                    {/* Bagian Gambar atau Icon */}
                     {p.thumbnail_url ? (
                       <img
                         src={p.thumbnail_url}
@@ -159,13 +161,16 @@ export default function CategoryPage() {
                       <ShoppingBag className="w-10 h-10 text-violet-300" />
                     )}
 
-                    {String(p.custom_fields?.badge ?? "") && (
+                    {/* Bagian Badge - SUDAH 100% AMAN UNTUK TYPESCRIPT */}
+                    {String(p.custom_fields?.badge ?? '') && (
                       <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-xs rounded-lg">
                         {String(p.custom_fields?.badge)}
                       </span>
                     )}
+
                   </div>
 
+                  {/* Bagian Info Produk */}
                   <div className="p-3">
                     <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">
                       {p.name}
