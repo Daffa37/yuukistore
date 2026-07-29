@@ -107,12 +107,18 @@ export default function CategoryPage() {
                   className="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-violet-200 hover:shadow-md transition-all">
                   <div className="aspect-square bg-gradient-to-br from-violet-50 to-indigo-50 flex items-center justify-center relative overflow-hidden">
                     {p.thumbnail_url
-                      ? <img src={p.thumbnail_url} alt={p.name} className="w-full h-full object-cover" />
-                    : <ShoppingBag className="w-10 h-10 text-violet-300" />
-                  {String(p.custom_fields?.badge ?? '') && (
-                  <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-xs rounded-lg">
-                  {String(p.custom_fields?.badge)}
-                  </span>
+                      {/* BUNGKUS BAGIAN INI PAKAI KURUNG KURAWAL {} */}
+                      {p.thumbnail_url ? (
+                      <img src={p.thumbnail_url} alt={p.name} className="w-full h-full object-cover" />
+                      ) : (
+    <ShoppingBag className="w-10 h-10 text-violet-300" />
+)                   }
+
+                  {/* SETELAH ITU, BARU TAMPILKAN BADGE NYA */}
+                    {String(p.custom_fields?.badge ?? '') && (
+                   <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-xs rounded-lg">
+                    {String(p.custom_fields?.badge)}
+                 </span>
                   )}
                   </div>
                   {/* Tanpa harga */}
