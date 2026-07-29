@@ -3,6 +3,9 @@
 // Helper functions umum
 // ────────────────────────────────────────────────────────────────
 
+// --- TIPE DATA ORDER (DITAMBAHKAN DI SINI AGAR TIDAK ERROR) ---
+export type OrderStatus = "pending" | "paid" | "processing" | "completed" | "cancelled" | "refunded";
+
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
