@@ -40,6 +40,7 @@ interface Product {
   slug: string;
   description: string | null;
   thumbnail_url: string | null;
+  logo_url: string | null; // <--- TAMBAHAN LOGO
   base_price: number;
   variants: Variant[];
   form_fields: FormFieldDef[];
@@ -451,6 +452,20 @@ export default function ProductDetailPage() {
                       : "border-gray-100 hover:border-violet-200"
                   }`}
                 >
+                  {/* --- TAMBAHAN LOGO DI POJOK KANAN ATAS --- */}
+                  {product.logo_url ? (
+                    <img 
+                      src={product.logo_url} 
+                      alt="Logo" 
+                      className="absolute top-2 right-2 w-6 h-6 object-contain opacity-60 group-hover:opacity-100"
+                    />
+                  ) : (
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                      <span className="text-[6px] text-gray-400">No Logo</span>
+                    </div>
+                  )}
+                  {/* --------------------------------------- */}
+
                   {/* Label */}
                   <p className="text-xs font-semibold text-gray-900 mb-0.5 pr-5">
                     {v.label}
