@@ -60,7 +60,7 @@ export default function ContactPage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal mengirim pesan";
       // Jika key belum diganti, kasih pesan khusus
-      if (WEB3FORMS_KEY === "YOUR_WEB3FORMS_ACCESS_KEY") {
+      if (WEB3FORMS_KEY === "8780b098-12b5-4952-af58-60758137bcfb") {
         setError("Access Key Web3Forms belum diisi. Buka web3forms.com dan masukkan email youxiyuuki531@gmail.com untuk mendapatkan key.");
       } else {
         setError(msg);
