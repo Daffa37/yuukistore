@@ -25,6 +25,7 @@ interface Variant {
 interface ProductForm {
   name: string; slug: string; category_id: string;
   description: string; thumbnail_url: string;
+  logo_url: string; // <--- TAMBAHAN LOGO
   base_price: string; is_active: boolean;
   stock: string; sort_order: string;
   form_fields: FormField[]; variants: Variant[];
@@ -118,6 +119,50 @@ function ImageLinkInput({ value, onChange }: { value: string; onChange: (url: st
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ── LogoLinkInput (TAMBAHAN UNTUK LOGO) ───────────────────────
+function LogoLinkInput({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [raw, setRaw]         = useState(value);
+  const [preview, setPreview] = useState(value ?? "");
+
+  const apply = () => {
+    if (!raw.trim()) { setPreview(""); onChange(""); return; }
+    const c = raw.trim();
+    setPreview(c); onChange(c);
+  };
+
+  return (
+    <div className="space-y-3 pt-4 border-t border-gray-100">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-gray-700">Logo Produk (Icon Pojok Kanan)</label>
+        <span className="text-[10px] text-gray-400">Opsional</span>
+      </div>
+      <div className="flex gap-2">
+        <div className="flex-1 relative">
+          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"/>
+          <input type="url" value={raw} onChange={e=>setRaw(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&apply()}
+            placeholder="https://upload.wikimedia.org/.../logo.png"
+            className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500"/>
+        </div>
+        <button type="button" onClick={apply}
+          className="px-4 py-2.5 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 shrink-0">
+          Terapkan
+        </button>
+      </div>
+      {preview && (
+        <div className="relative inline-block">
+          <img src={preview} alt="Logo Preview" className="w-20 h-20 object-contain border border-gray-200 rounded-xl p-2 bg-white" />
+          <button type="button" onClick={()=>{setRaw("");setPreview("");onChange("");}}
+            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center border-2 border-white">
+            <X className="w-3 h-3"/>
+          </button>
+        </div>
+      )}
+      <p className="text-[10px] text-gray-400">Masukkan link gambar logo game (contoh: dari Wikipedia)</p>
     </div>
   );
 }
@@ -226,7 +271,7 @@ export default function EditProductPage() {
   const productId = params.id as string;
 
   const [form, setForm]       = useState<ProductForm>({
-    name:"", slug:"", category_id:"", description:"", thumbnail_url:"",
+    name:"", slug:"", category_id:"", description:"", thumbnail_url:"", logo_url:"", // <--- TAMBAHAN LOGO
     base_price:"", is_active:true, stock:"", sort_order:"0",
     form_fields:[], variants:[],
   });
@@ -275,6 +320,7 @@ export default function EditProductPage() {
         category_id:   prod.category_id,
         description:   prod.description ?? "",
         thumbnail_url: prod.thumbnail_url ?? "",
+        logo_url:      prod.logo_url ?? "", // <--- TAMBAHAN LOGO
         base_price:    String(prod.base_price),
         is_active:     prod.is_active,
         stock:         prod.stock != null ? String(prod.stock) : "",
@@ -302,6 +348,7 @@ export default function EditProductPage() {
         category_id:   form.category_id,
         description:   form.description || null,
         thumbnail_url: form.thumbnail_url || null,
+        logo_url:      form.logo_url || null, // <--- TAMBAHAN LOGO
         base_price:    parseFloat(form.base_price),
         is_active:     form.is_active,
         stock:         form.stock ? parseInt(form.stock) : null,
@@ -404,7 +451,7 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Gambar */}
+        {/* Gambar & Logo */}
         <div className="bg-white border border-gray-100 rounded-2xl p-5">
           <div className="flex items-center gap-2 pb-3 border-b border-gray-100 mb-4">
             <ImageIcon className="w-4 h-4 text-violet-600"/>
@@ -412,6 +459,10 @@ export default function EditProductPage() {
           </div>
           <ImageLinkInput value={form.thumbnail_url}
             onChange={url=>setForm(f=>({...f,thumbnail_url:url}))}/>
+          
+          {/* --- TAMBAHAN INPUT LOGO DI SINI --- */}
+          <LogoLinkInput value={form.logo_url}
+            onChange={url=>setForm(f=>({...f,logo_url:url}))}/>
         </div>
 
         {/* Harga */}
