@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-// ── Types ──────────────────────────────────────────────────────
 interface FormField {
   id: string; name: string; label: string;
   type: "text" | "number" | "tel" | "email" | "select" | "textarea";
@@ -25,16 +24,14 @@ interface Variant {
 interface ProductForm {
   name: string; slug: string; category_id: string;
   description: string; thumbnail_url: string;
-  logo_url: string; // <--- TAMBAHAN LOGO
+  logo_url: string;
   base_price: string; is_active: boolean;
   stock: string; sort_order: string;
   form_fields: FormField[]; variants: Variant[];
 }
 
-// ── Helpers ────────────────────────────────────────────────────
 const toSlug  = (s: string) => s.toLowerCase().replace(/[^\w\s-]/g,"").replace(/\s+/g,"-").trim();
 const uid     = () => Math.random().toString(36).slice(2,8);
-const fmtRp   = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
 const convertGDriveUrl = (url: string) => {
   const m1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -42,7 +39,6 @@ const convertGDriveUrl = (url: string) => {
   return url;
 };
 
-// ── ImageLinkInput ─────────────────────────────────────────────
 function ImageLinkInput({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const [raw, setRaw]         = useState(value);
   const [preview, setPreview] = useState(value ? convertGDriveUrl(value) : "");
@@ -123,7 +119,6 @@ function ImageLinkInput({ value, onChange }: { value: string; onChange: (url: st
   );
 }
 
-// ── LogoLinkInput (TAMBAHAN UNTUK LOGO) ───────────────────────
 function LogoLinkInput({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const [raw, setRaw]         = useState(value);
   const [preview, setPreview] = useState(value ?? "");
@@ -167,7 +162,6 @@ function LogoLinkInput({ value, onChange }: { value: string; onChange: (url: str
   );
 }
 
-// ── VariantRow ─────────────────────────────────────────────────
 function VariantRow({ variant, onChange, onRemove }: {
   variant: Variant; onChange: (v: Variant) => void; onRemove: () => void;
 }) {
@@ -202,7 +196,6 @@ function VariantRow({ variant, onChange, onRemove }: {
   );
 }
 
-// ── FormFieldRow ───────────────────────────────────────────────
 function FormFieldRow({ field, onChange, onRemove, index }: {
   field: FormField; onChange: (f: FormField) => void; onRemove: () => void; index: number;
 }) {
@@ -263,7 +256,6 @@ function FormFieldRow({ field, onChange, onRemove, index }: {
   );
 }
 
-// ── Halaman Edit Produk ────────────────────────────────────────
 export default function EditProductPage() {
   const router   = useRouter();
   const params   = useParams();
@@ -271,7 +263,7 @@ export default function EditProductPage() {
   const productId = params.id as string;
 
   const [form, setForm]       = useState<ProductForm>({
-    name:"", slug:"", category_id:"", description:"", thumbnail_url:"", logo_url:"", // <--- TAMBAHAN LOGO
+    name:"", slug:"", category_id:"", description:"", thumbnail_url:"", logo_url:"",
     base_price:"", is_active:true, stock:"", sort_order:"0",
     form_fields:[], variants:[],
   });
@@ -283,17 +275,14 @@ export default function EditProductPage() {
 
   useEffect(() => {
     const init = async () => {
-      // Ambil kategori
       const { data: cats } = await supabase.from("categories").select("id, name").eq("is_active", true).order("sort_order");
       setCategories(cats ?? []);
 
-      // Ambil data produk
       const { data: prod, error: err } = await supabase
         .from("products").select("*").eq("id", productId).single();
 
       if (err || !prod) { setError("Produk tidak ditemukan."); setLoading(false); return; }
 
-      // Konversi variants dari DB ke state
       const variants: Variant[] = (prod.variants ?? []).map((v: Record<string,unknown>) => ({
         id:             String(v.id ?? uid()),
         label:          String(v.label ?? ""),
@@ -303,7 +292,6 @@ export default function EditProductPage() {
         is_active:      Boolean(v.is_active ?? true),
       }));
 
-      // Konversi form_fields dari DB ke state
       const form_fields: FormField[] = (prod.form_fields ?? []).map((f: Record<string,unknown>) => ({
         id:          String(f.id ?? uid()),
         name:        String(f.name ?? ""),
@@ -320,7 +308,7 @@ export default function EditProductPage() {
         category_id:   prod.category_id,
         description:   prod.description ?? "",
         thumbnail_url: prod.thumbnail_url ?? "",
-        logo_url:      prod.logo_url ?? "", // <--- TAMBAHAN LOGO
+        logo_url:      prod.logo_url ?? "",
         base_price:    String(prod.base_price),
         is_active:     prod.is_active,
         stock:         prod.stock != null ? String(prod.stock) : "",
@@ -348,7 +336,7 @@ export default function EditProductPage() {
         category_id:   form.category_id,
         description:   form.description || null,
         thumbnail_url: form.thumbnail_url || null,
-        logo_url:      form.logo_url || null, // <--- TAMBAHAN LOGO
+        logo_url:      form.logo_url || null,
         base_price:    parseFloat(form.base_price),
         is_active:     form.is_active,
         stock:         form.stock ? parseInt(form.stock) : null,
@@ -418,7 +406,6 @@ export default function EditProductPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Info dasar */}
         <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
             <Tag className="w-4 h-4 text-violet-600"/>
@@ -451,7 +438,6 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Gambar & Logo */}
         <div className="bg-white border border-gray-100 rounded-2xl p-5">
           <div className="flex items-center gap-2 pb-3 border-b border-gray-100 mb-4">
             <ImageIcon className="w-4 h-4 text-violet-600"/>
@@ -459,13 +445,10 @@ export default function EditProductPage() {
           </div>
           <ImageLinkInput value={form.thumbnail_url}
             onChange={url=>setForm(f=>({...f,thumbnail_url:url}))}/>
-          
-          {/* --- TAMBAHAN INPUT LOGO DI SINI --- */}
           <LogoLinkInput value={form.logo_url}
             onChange={url=>setForm(f=>({...f,logo_url:url}))}/>
         </div>
 
-        {/* Harga */}
         <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
             <DollarSign className="w-4 h-4 text-violet-600"/>
@@ -492,8 +475,6 @@ export default function EditProductPage() {
                 className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500"/>
             </div>
           </div>
-
-          {/* Varian */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-semibold text-gray-700">Varian Harga</p>
@@ -516,7 +497,6 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Form fields */}
         <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
             <FileText className="w-4 h-4 text-violet-600"/>
