@@ -1,7 +1,3 @@
-// ================================================================
-//  FILE 1: src/app/(storefront)/categories/[slug]/page.tsx
-//  Halaman kategori — tampilkan produk berdasarkan slug kategori
-// ================================================================
 "use client";
 
 import { useState, useEffect } from "react";
@@ -38,7 +34,6 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const init = async () => {
-      // Ambil kategori berdasarkan slug
       const { data: cat, error } = await supabase
         .from("categories")
         .select("*")
@@ -53,7 +48,6 @@ export default function CategoryPage() {
       }
       setCategory(cat);
 
-      // Ambil produk dalam kategori ini
       const { data: prods } = await supabase
         .from("products")
         .select("id, name, slug, thumbnail_url, custom_fields")
@@ -97,7 +91,6 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">
           <Link
@@ -132,9 +125,6 @@ export default function CategoryPage() {
             <p className="text-sm text-gray-500 font-medium">
               Belum ada produk di kategori ini
             </p>
-            <p className="text-xs text-gray-400 mt-1">
-              Admin sedang menyiapkan produk terbaik untuk kamu
-            </p>
           </div>
         ) : (
           <>
@@ -142,45 +132,49 @@ export default function CategoryPage() {
               {products.length} produk tersedia
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {products.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug}`}
-                  className="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-violet-200 hover:shadow-md transition-all"
-                >
-                  <div className="aspect-square bg-gradient-to-br from-violet-50 to-indigo-50 flex items-center justify-center relative">
-                    
-                    {/* Bagian Gambar atau Icon */}
-                    {p.thumbnail_url ? (
-                      <img
-                        src={p.thumbnail_url}
-                        alt={p.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <ShoppingBag className="w-10 h-10 text-violet-300" />
-                    )}
+              {products.map((p) => {
+                // CARA PALING AMAN: Simpan badge ke variabel lokal dulu
+                const badgeText = p.custom_fields?.badge;
+                const isBadgeValid = typeof badgeText === 'string' && badgeText.length > 0;
 
-                    {/* Bagian Badge - SUDAH 100% AMAN UNTUK TYPESCRIPT */}
-                    {String(p.custom_fields?.badge ?? '') && (
-                      <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-xs rounded-lg">
-                        {String(p.custom_fields?.badge)}
-                      </span>
-                    )}
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/products/${p.slug}`}
+                    className="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-violet-200 hover:shadow-md transition-all"
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-violet-50 to-indigo-50 flex items-center justify-center relative">
+                      
+                      {p.thumbnail_url ? (
+                        <img
+                          src={p.thumbnail_url}
+                          alt={p.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <ShoppingBag className="w-10 h-10 text-violet-300" />
+                      )}
 
-                  </div>
+                      {/* SEKARANG BARU DITAMPILKAN DENGAN AMAN */}
+                      {isBadgeValid && (
+                        <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-xs rounded-lg">
+                          {badgeText}
+                        </span>
+                      )}
 
-                  {/* Bagian Info Produk */}
-                  <div className="p-3">
-                    <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">
-                      {p.name}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1.5">
-                      Klik untuk lihat harga
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                    </div>
+
+                    <div className="p-3">
+                      <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">
+                        {p.name}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1.5">
+                        Klik untuk lihat harga
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </>
         )}
