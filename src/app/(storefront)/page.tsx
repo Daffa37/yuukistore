@@ -368,9 +368,11 @@ export default function HomePage() {
                   {p.thumbnail_url
                     ? <img src={p.thumbnail_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     : <ShoppingBag className="w-10 h-10 text-violet-300" />}
-                  {p.custom_fields?.badge && (
+                  
+                  {/* PERBAIKAN DI SINI (Baris 308 / Card produk) */}
+                  {String(p.custom_fields?.badge ?? "") && (
                     <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-[10px] font-semibold rounded-full">
-                      {String(p.custom_fields.badge)}
+                      {String(p.custom_fields?.badge)}
                     </span>
                   )}
                 </div>
