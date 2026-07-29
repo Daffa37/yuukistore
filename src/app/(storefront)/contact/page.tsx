@@ -5,15 +5,10 @@ import Link from "next/link";
 import { useState } from "react";
 
 // ================================================================
-//  CARA DAPAT ACCESS KEY WEB3FORMS:
-//  1. Buka https://web3forms.com
-//  2. Masukkan email: youxiyuuki531@gmail.com
-//  3. Klik "Create Access Key"
-//  4. Cek inbox Gmail kamu → ada email dari Web3Forms
-//  5. Copy Access Key-nya
-//  6. Ganti "YOUR_WEB3FORMS_ACCESS_KEY" di bawah dengan key kamu
+//  ACCESS KEY WEB3FORMS (SUDAH DIISI)
+//  Ganti baris ini jika Anda membuat akun baru dengan email berbeda.
 // ================================================================
-const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY"; // ← GANTI INI
+const WEB3FORMS_KEY = "8780b098-12b5-4952-af58-60758137bcfb"; 
 
 export default function ContactPage() {
   const [name, setName]       = useState("");
@@ -43,9 +38,8 @@ export default function ContactPage() {
           email: email.trim(),
           subject: subject.trim() || `[YuukiStore] Pesan dari ${name.trim()}`,
           message: message.trim(),
-          // Opsi tambahan Web3Forms:
           from_name: "YuukiStore Contact Form",
-          redirect: false, // jangan redirect, kita handle sendiri
+          redirect: false, 
         }),
       });
 
@@ -59,9 +53,12 @@ export default function ContactPage() {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal mengirim pesan";
-      // Jika key belum diganti, kasih pesan khusus
-      if (WEB3FORMS_KEY === "8780b098-12b5-4952-af58-60758137bcfb") {
-        setError("Access Key Web3Forms belum diisi. Buka web3forms.com dan masukkan email youxiyuuki531@gmail.com untuk mendapatkan key.");
+      
+      // PERBAIKAN DI SINI:
+      // Kita cek apakah KEY masih default (biasanya "YOUR_ACCESS_KEY").
+      // Karena Anda sudah mengisinya dengan kode asli, bagian ini TIDAK AKAN JALAN.
+      if (WEB3FORMS_KEY === "YOUR_WEB3FORMS_ACCESS_KEY") {
+        setError("Access Key Web3Forms belum diisi. Buka web3forms.com dan masukkan email untuk mendapatkan key.");
       } else {
         setError(msg);
       }
@@ -87,7 +84,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 gap-3">
           {[
             { icon: "💬", label: "WhatsApp",       value: "+62 851-7234-7189",       href: "https://wa.me/6285172347189" },
-            { icon: "📧", label: "Email",           value: "youxiyuuki531@gmail.com", href: "mailto:youxiyuuki531@gmail.com" },
+            { icon: "📧", label: "Email",           value: "daffafirzatullah03@gmail.com", href: "mailto:daffafirzatullah03@gmail.com" },
             { icon: "🕐", label: "Jam Operasional", value: "08.00 – 21.00 WIB",       href: null },
           ].map((c) => (
             <div key={c.label} className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3">
@@ -192,7 +189,7 @@ export default function ContactPage() {
                 {loading ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Mengirim...</>
                 ) : (
-                  "📨 Kirim ke youxiyuuki531@gmail.com"
+                  "📨 Kirim ke Admin"
                 )}
               </button>
             </form>
