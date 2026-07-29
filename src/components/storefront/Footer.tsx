@@ -4,6 +4,7 @@
 // ────────────────────────────────────────────────────────────────
 
 import { Store as StoreIcon } from "lucide-react";
+import Link from "next/link"; // <--- PERBAIKAN PENTING DI SINI!
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -67,28 +68,3 @@ export function Footer() {
     </footer>
   );
 }
-
-
-// ────────────────────────────────────────────────────────────────
-// FILE 3: src/app/(storefront)/layout.tsx
-// Layout storefront — pakai Navbar + Footer baru
-// ────────────────────────────────────────────────────────────────
-
-/*
-import { Navbar } from "@/components/storefront/Navbar";
-import { Footer } from "@/components/storefront/Footer";
-
-export default function StorefrontLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
-  );
-}
-*/
