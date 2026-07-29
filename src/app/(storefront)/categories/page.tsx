@@ -124,19 +124,18 @@ export default function CategoryPage() {
                    <span className="absolute top-2 left-2 px-2 py-0.5 bg-violet-600 text-white text-xs rounded-lg">
                     {String(p.custom_fields?.badge)}
                  </span>
-                  )}
-                  </div>
-                  {/* Tanpa harga */}
-                  <div className="p-3">
-                    <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">{p.name}</p>
-                    <p className="text-xs text-gray-400 mt-1.5">Klik untuk lihat harga →</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+                                 </div>
+                
+                {/* Bagian Info Produk */}
+                <div className="p-3">
+                    <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">
+                        {p.name}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1.5">
+                        Klik untuk lihat harga
+                    </p>
+                </div>
+            </Link>
+        ))}
     </div>
-  );
-}
+);
