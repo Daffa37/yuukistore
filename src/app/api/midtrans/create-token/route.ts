@@ -3,15 +3,15 @@
 //
 //  API Route untuk membuat Midtrans Snap Token (server-side)
 //
-//  PRODUCTION SETUP:
+//  SANDBOX SETUP:
 //  1. Daftar di https://midtrans.com
 //  2. Dashboard → Settings → Access Keys
 //  3. Tambahkan ke .env.local:
-//     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=Mid-client-V51AyIGAPlUdBH9B
-//     MIDTRANS_SERVER_KEY=Mid-server-Kz2-4kUSFJ6l4swABTQqLFu2
-//  4. Production endpoints:
-//     https://app.midtrans.com/snap/snap.js
-//     https://app.midtrans.com/snap/v1/transactions
+//     NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxxxxx
+//     MIDTRANS_SERVER_KEY=SB-Mid-server-xxxxxxx
+//  4. Sandbox endpoints:
+//     https://app.sandbox.midtrans.com/snap/snap.js
+//     https://app.sandbox.midtrans.com/snap/v1/transactions
 // ================================================================
 
 import { NextRequest, NextResponse } from "next/server";
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     // Pastikan amount adalah integer dan minimal 1
     const grossAmount = Math.max(1, Math.round(amount));
 
-    // Payload ke Midtrans Snap API (Production)
+    // Payload ke Midtrans Snap API (Sandbox)
     const payload = {
       transaction_details: {
         order_id: orderId,
@@ -84,11 +84,11 @@ export async function POST(req: NextRequest) {
         },
       ],
       callbacks: {
-        finish: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-domain.com"}/orders`,
-        error: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-domain.com"}/orders`,
-        pending: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://your-domain.com"}/orders`,
+        finish: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/orders`,
+        error: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/orders`,
+        pending: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/orders`,
       },
-      // Enable untuk production features
+      // Sandbox features
       credit_card: {
         secure: true,
         save_card: false,
@@ -103,14 +103,30 @@ export async function POST(req: NextRequest) {
           },
         },
       },
-      // Custom field untuk tracking
-      custom_field1: "production",
+      // Custom field untuk tracking (sandbox)
+      custom_field1: "sandbox",
       custom_field2: new Date().toISOString(),
+      // Sandbox specific: enable simulated payment methods
+      enabled_payments: [
+        "credit_card",
+        "mandiri_clickpay",
+        "bca_klikpay",
+        "bca_klikbca",
+        "bri_epay",
+        "echannel",
+        "indomaret",
+        "alfamart",
+        "akulaku",
+        "kredivo",
+        "gopay",
+        "shopeepay",
+        "qris"
+      ],
     };
 
-    // Request ke Midtrans Snap API (Production)
+    // Request ke Midtrans Snap API (Sandbox)
     const midtransRes = await fetch(
-      "https://app.midtrans.com/snap/v1/transactions",
+      "https://app.sandbox.midtrans.com/snap/v1/transactions",
       {
         method: "POST",
         headers: {
@@ -123,21 +139,20 @@ export async function POST(req: NextRequest) {
 
     const midtransData = await midtransRes.json();
 
-    // Log untuk debugging (hapus di production jika tidak diperlukan)
-    if (process.env.NODE_ENV === "development") {
-      console.log("Midtrans Request:", {
-        url: "https://app.midtrans.com/snap/v1/transactions",
-        orderId,
-        amount: grossAmount,
-        status: midtransRes.status,
-      });
-    }
+    // Log untuk debugging
+    console.log("Sandbox Midtrans Request:", {
+      url: "https://app.sandbox.midtrans.com/snap/v1/transactions",
+      orderId,
+      amount: grossAmount,
+      status: midtransRes.status,
+      environment: "sandbox"
+    });
 
     if (!midtransRes.ok) {
-      console.error("Midtrans error:", midtransData);
+      console.error("Midtrans sandbox error:", midtransData);
       
       // Handle error messages dari Midtrans
-      let errorMessage = "Gagal membuat token pembayaran.";
+      let errorMessage = "Gagal membuat token pembayaran di sandbox.";
       if (midtransData?.error_messages) {
         errorMessage = midtransData.error_messages.join(", ");
       } else if (midtransData?.message) {
@@ -148,7 +163,8 @@ export async function POST(req: NextRequest) {
         { 
           success: false,
           message: errorMessage,
-          details: midtransData 
+          details: midtransData,
+          environment: "sandbox"
         },
         { status: midtransRes.status }
       );
@@ -160,18 +176,20 @@ export async function POST(req: NextRequest) {
       token: midtransData.token,
       redirect_url: midtransData.redirect_url,
       transaction_id: midtransData.transaction_id || orderId,
+      environment: "sandbox"
     });
 
   } catch (error: unknown) {
-    console.error("Midtrans API error:", error);
+    console.error("Midtrans Sandbox API error:", error);
     
-    const errorMessage = error instanceof Error ? error.message : "Terjadi kesalahan pada server.";
+    const errorMessage = error instanceof Error ? error.message : "Terjadi kesalahan pada server sandbox.";
     
     return NextResponse.json(
       { 
         success: false,
         message: errorMessage,
         timestamp: new Date().toISOString(),
+        environment: "sandbox"
       },
       { status: 500 }
     );
